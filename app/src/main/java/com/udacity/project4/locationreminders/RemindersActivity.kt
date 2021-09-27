@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
+import com.firebase.ui.auth.AuthUI
 import com.udacity.project4.R
 
 /**
@@ -23,6 +24,11 @@ class RemindersActivity : AppCompatActivity() {
                 (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
                     .navController.popBackStack()
                 return true
+            }
+            R.id.logout -> {
+                AuthUI.getInstance().signOut(applicationContext).addOnSuccessListener {
+                    finish()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
