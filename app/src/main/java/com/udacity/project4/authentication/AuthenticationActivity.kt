@@ -65,6 +65,8 @@ class AuthenticationActivity : AppCompatActivity() {
         }
     }
 
+    // using new androidx activity API to handle permission results
+    // no request codes needed anymore, yay!
     private fun registerFirebaseAuthResultLauncher() {
         firebaseAuthLauncher =
             registerForActivityResult(FirebaseAuthUIActivityResultContract()) {
