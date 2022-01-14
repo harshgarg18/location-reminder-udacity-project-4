@@ -2,6 +2,8 @@ package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.udacity.project4.base.BaseViewModel
 import com.udacity.project4.locationreminders.data.ReminderDataSource
@@ -29,7 +31,8 @@ class RemindersListViewModel(
             when (result) {
                 is Result.Success<*> -> {
                     val dataList = ArrayList<ReminderDataItem>()
-                    dataList.addAll((result.data as List<ReminderDTO>).map { reminder ->
+                    dataList.addAll((result.data as List<*>).map { r ->
+                        val reminder = r as ReminderDTO
                         //map the reminder data from the DB to the be ready to be displayed on the UI
                         ReminderDataItem(
                             reminder.title,
@@ -37,6 +40,7 @@ class RemindersListViewModel(
                             reminder.location,
                             reminder.latitude,
                             reminder.longitude,
+                            reminder.radius,
                             reminder.id
                         )
                     })
@@ -56,5 +60,12 @@ class RemindersListViewModel(
      */
     private fun invalidateShowNoData() {
         showNoData.value = remindersList.value == null || remindersList.value!!.isEmpty()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    class Factory(private val app: Application, private val dataSource: ReminderDataSource) :
+        ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel> create(modelClass: Class<T>) =
+            (RemindersListViewModel(app, dataSource) as T)
     }
 }

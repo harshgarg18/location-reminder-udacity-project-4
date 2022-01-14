@@ -5,6 +5,7 @@
     <string name="no_data">No Data</string>
     <string name="reminder_title">Reminder Title</string>
     <string name="reminder_desc">Description</string>
+    <string name="reminder_radius">Geofence Radius</string>
     <string name="reminder_location">Reminder Location</string>
     <string name="save">Save</string>
     <string name="reminder_saved">Reminder Saved !</string>
@@ -33,6 +34,7 @@
     <string name="welcome">Welcome</string>
     <string name="err_enter_title">Please enter title</string>
     <string name="err_select_location">Please select location</string>
+    <string name="err_enter_radius">Please enter Geofence Radius</string>
 
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>
@@ -41,4 +43,5 @@
     <string name="geofence_too_many_pending_intents">You have provided too many PendingIntents to the addGeofences() call.</string>
     <string name="error_adding_geofence">Error Happened, Can\'t Add Geofence</string>
     <string name="select">Select</string>
+    <string name="logout_failed">Failed to logout, please try after some time</string>
 </resources>

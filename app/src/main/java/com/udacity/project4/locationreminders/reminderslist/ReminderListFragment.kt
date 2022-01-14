@@ -3,6 +3,10 @@ package com.udacity.project4.locationreminders.reminderslist
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import com.firebase.ui.auth.AuthUI
+import com.google.android.material.snackbar.Snackbar
+import com.udacity.project4.MyApp
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -10,16 +14,18 @@ import com.udacity.project4.databinding.FragmentRemindersBinding
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReminderListFragment : BaseFragment() {
-    //use Koin to retrieve the ViewModel instance
-    override val viewModel: RemindersListViewModel by viewModel()
+    override val viewModel: RemindersListViewModel by viewModels {
+        val app = requireContext().applicationContext as MyApp
+        RemindersListViewModel.Factory(app, app.dataSource)
+    }
+
     private lateinit var binding: FragmentRemindersBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -55,7 +61,7 @@ class ReminderListFragment : BaseFragment() {
         //use the navigationCommand live data to navigate between the fragments
         viewModel.navigationCommand.postValue(
             NavigationCommand.To(
-                ReminderListFragmentDirections.toSaveReminder()
+                ReminderListFragmentDirections.toSaveReminder(null, false)
             )
         )
     }
@@ -71,7 +77,18 @@ class ReminderListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-//                TODO: add the logout implementation
+                AuthUI.getInstance().signOut(requireContext()).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        requireActivity().finish()
+                    } else {
+                        Snackbar.make(
+                            requireView(),
+                            getString(R.string.logout_failed),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                return true
             }
         }
         return super.onOptionsItemSelected(item)

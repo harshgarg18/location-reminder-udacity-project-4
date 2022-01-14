@@ -2,15 +2,17 @@ package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.PointOfInterest
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseViewModel
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.utils.Constants
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -18,10 +20,15 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
     BaseViewModel(app) {
     val reminderTitle = MutableLiveData<String?>()
     val reminderDescription = MutableLiveData<String?>()
+    val reminderRadius = MutableLiveData<Int?>()
     val reminderSelectedLocationStr = MutableLiveData<String?>()
-    val selectedPOI = MutableLiveData<PointOfInterest?>()
+//    val selectedPOI = MutableLiveData<PointOfInterest?>()
     val latitude = MutableLiveData<Double?>()
     val longitude = MutableLiveData<Double?>()
+
+    init {
+        reminderRadius.value = Constants.GEOFENCE_RADIUS_IN_METERS
+    }
 
     /**
      * Clear the live data objects to start fresh next time the view model gets called
@@ -29,8 +36,9 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
     fun onClear() {
         reminderTitle.value = null
         reminderDescription.value = null
+        reminderRadius.value = Constants.GEOFENCE_RADIUS_IN_METERS
         reminderSelectedLocationStr.value = null
-        selectedPOI.value = null
+//        selectedPOI.value = null
         latitude.value = null
         longitude.value = null
     }
@@ -38,16 +46,18 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
     /**
      * Validate the entered data then saves the reminder data to the DataSource
      */
-    fun validateAndSaveReminder(reminderData: ReminderDataItem) {
+    fun validateAndSaveReminder(reminderData: ReminderDataItem): Boolean {
         if (validateEnteredData(reminderData)) {
             saveReminder(reminderData)
+            return true
         }
+        return false
     }
 
     /**
      * Save the reminder to the data source
      */
-    fun saveReminder(reminderData: ReminderDataItem) {
+    private fun saveReminder(reminderData: ReminderDataItem) {
         showLoading.value = true
         viewModelScope.launch {
             dataSource.saveReminder(
@@ -57,6 +67,7 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
                     reminderData.location,
                     reminderData.latitude,
                     reminderData.longitude,
+                    reminderData.radius,
                     reminderData.id
                 )
             )
@@ -69,7 +80,7 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
     /**
      * Validate the entered data and show error to the user if there's any invalid data
      */
-    fun validateEnteredData(reminderData: ReminderDataItem): Boolean {
+    private fun validateEnteredData(reminderData: ReminderDataItem): Boolean {
         if (reminderData.title.isNullOrEmpty()) {
             showSnackBarInt.value = R.string.err_enter_title
             return false
@@ -79,6 +90,12 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
             showSnackBarInt.value = R.string.err_select_location
             return false
         }
+
+        if (reminderData.radius == null || reminderData.radius!!.isNaN()) {
+            showSnackBarInt.value = R.string.err_enter_radius
+            return false
+        }
+
         return true
     }
 
@@ -95,5 +112,12 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
                 latLng.longitude
             )
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    class Factory(private val app: Application, private val dataSource: ReminderDataSource) :
+        ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel> create(modelClass: Class<T>) =
+            (SaveReminderViewModel(app, dataSource) as T)
     }
 }

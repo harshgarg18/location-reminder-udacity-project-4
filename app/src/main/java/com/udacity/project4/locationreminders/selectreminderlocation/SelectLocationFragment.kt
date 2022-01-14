@@ -1,4 +1,4 @@
-package com.udacity.project4.locationreminders.savereminder.selectreminderlocation
+package com.udacity.project4.locationreminders.selectreminderlocation
 
 
 import android.Manifest
@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,13 +21,14 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.udacity.project4.MyApp
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
-import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.locationreminders.savereminder.LocationInfo
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
-import org.koin.android.ext.android.inject
+
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
@@ -36,8 +38,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         private val defaultLocation = LatLng(-33.852, 151.211) // Sydney
     }
 
-    //Use Koin to get the view model of the SaveReminder
-    override val viewModel: SaveReminderViewModel by inject()
+    override val viewModel: SelectLocationViewModel by viewModels (ownerProducer = { this.requireActivity()}) {
+        val app = requireContext().applicationContext as MyApp
+        SelectLocationViewModel.Factory(app)
+    }
+
     private lateinit var binding: FragmentSelectLocationBinding
 
     private lateinit var map: GoogleMap
@@ -168,7 +173,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
 
     private fun onLocationSelected(latLng: LatLng) {
-        viewModel.navigationCommand.postValue(NavigationCommand.Back)
         viewModel.showLoading.postValue(true)
 
         var locationDescription: String? = null
@@ -181,8 +185,15 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        viewModel.markLocation(latLng, locationDescription)
 
+
+        viewModel.navigationCommand.postValue(
+            NavigationCommand.To(
+                SelectLocationFragmentDirections.saveLocation(
+                    LocationInfo(latLng, locationDescription), true
+                )
+            )
+        )
         viewModel.showLoading.postValue(false)
     }
 
@@ -210,22 +221,15 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.normal_map -> {
-            map.mapType = GoogleMap.MAP_TYPE_NORMAL
-            true
-        }
-        R.id.hybrid_map -> {
-            map.mapType = GoogleMap.MAP_TYPE_HYBRID
-            true
-        }
-        R.id.satellite_map -> {
-            map.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            true
-        }
-        R.id.terrain_map -> {
-            map.mapType = GoogleMap.MAP_TYPE_TERRAIN
-            true
-        }
+        R.id.normal_map -> setMapType(GoogleMap.MAP_TYPE_NORMAL)
+        R.id.hybrid_map -> setMapType(GoogleMap.MAP_TYPE_HYBRID)
+        R.id.satellite_map -> setMapType(GoogleMap.MAP_TYPE_SATELLITE)
+        R.id.terrain_map -> setMapType(GoogleMap.MAP_TYPE_TERRAIN)
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private val setMapType: (Int) -> Boolean = {
+        map.mapType = it
+        true
     }
 }

@@ -4,6 +4,11 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/reminderListFragment">
 
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.udacity.project4.locationreminders.RemindersActivity"
+        android:label="MainActivity" />
+
     <fragment
         android:id="@+id/reminderListFragment"
         android:name="com.udacity.project4.locationreminders.reminderslist.ReminderListFragment"
@@ -12,14 +17,18 @@
             android:id="@+id/to_save_reminder"
             app:destination="@id/saveReminderFragment" />
     </fragment>
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.udacity.project4.locationreminders.RemindersActivity"
-        android:label="MainActivity" />
+
     <fragment
         android:id="@+id/saveReminderFragment"
         android:name="com.udacity.project4.locationreminders.savereminder.SaveReminderFragment"
         android:label="Add Reminder">
+        <argument
+            android:name="locationInfo"
+            app:argType="com.udacity.project4.locationreminders.savereminder.LocationInfo"
+            app:nullable="true" />
+        <argument
+            android:name="fromMap"
+            app:argType="boolean" />
         <action
             android:id="@+id/action_saveReminderFragment_to_reminderListFragment"
             app:destination="@id/reminderListFragment" />
@@ -27,9 +36,16 @@
             android:id="@+id/action_saveReminderFragment_to_selectLocationFragment"
             app:destination="@id/selectLocationFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/selectLocationFragment"
-        android:name="com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectLocationFragment"
-        android:label="Select Location" />
+        android:name="com.udacity.project4.locationreminders.selectreminderlocation.SelectLocationFragment"
+        android:label="Select Location">
+        <action
+            android:id="@+id/save_location"
+            app:destination="@id/saveReminderFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/saveReminderFragment" />
+    </fragment>
 
 </navigation>

@@ -13,53 +13,108 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:paddingHorizontal="@dimen/padding_normal">
 
-        <EditText
-            android:id="@+id/reminderTitle"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reminderTitleLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/reminder_title"
-            android:text="@={viewModel.reminderTitle}"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            android:layout_marginTop="@dimen/margin_normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/reminderDescription"
+            <EditText
+                android:id="@+id/reminderTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:text="@={viewModel.reminderTitle}"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reminderDescriptionLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:hint="@string/reminder_desc"
-            android:lines="10"
-            android:text="@={viewModel.reminderDescription}"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            android:layout_marginTop="@dimen/margin_normal"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reminderTitle" />
+            app:layout_constraintTop_toBottomOf="@id/reminderTitleLayout">
+
+            <EditText
+                android:id="@+id/reminderDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:gravity="start"
+                android:hint="@string/reminder_desc"
+                android:inputType="textMultiLine"
+                android:lines="10"
+                android:text="@={viewModel.reminderDescription}"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reminderRadiusLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            android:layout_marginTop="@dimen/margin_normal"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reminderDescriptionLayout">
+
+            <EditText
+                android:id="@+id/reminderRadius"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:gravity="start"
+                android:hint="@string/reminder_radius"
+                android:inputType="number"
+                android:text="@={`` + viewModel.reminderRadius}"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <TextView
             android:id="@+id/selectLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
+            android:layout_marginTop="@dimen/margin_large"
             android:clickable="true"
-            android:drawableStart="@drawable/ic_location"
-            android:drawableLeft="@drawable/ic_location"
             android:focusable="true"
             android:gravity="center_vertical"
             android:text="@string/reminder_location"
-            android:textColor="@color/black"
+            app:drawableLeftCompat="@drawable/ic_location"
+            app:drawableStartCompat="@drawable/ic_location"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reminderDescription" />
+            app:layout_constraintTop_toBottomOf="@id/reminderRadiusLayout" />
 
         <TextView
             android:id="@+id/selectedLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_normal"
             android:text="@{viewModel.reminderSelectedLocationStr}"
-            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/selectLocation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/selectLocation"
@@ -70,6 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_normal"
+            android:contentDescription="@string/save"
             android:fadeVisible="@{!viewModel.showLoading.booleanValue()}"
             android:src="@drawable/ic_save"
             app:fabSize="normal"
