@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class LocationInfo(
     val latLng: LatLng,
-    val locationDescription: String?
+    val locationDescription: String
 ) : Parcelable

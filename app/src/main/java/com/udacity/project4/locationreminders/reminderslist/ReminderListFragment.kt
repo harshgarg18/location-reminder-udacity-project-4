@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -8,9 +9,11 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.MyApp
 import com.udacity.project4.R
+import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
+import com.udacity.project4.locationreminders.savereminder.LocationData
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
@@ -59,9 +62,10 @@ class ReminderListFragment : BaseFragment() {
 
     private fun navigateToAddReminder() {
         //use the navigationCommand live data to navigate between the fragments
+        LocationData.reset()
         viewModel.navigationCommand.postValue(
             NavigationCommand.To(
-                ReminderListFragmentDirections.toSaveReminder(null, false)
+                ReminderListFragmentDirections.toSaveReminder()
             )
         )
     }
@@ -79,7 +83,10 @@ class ReminderListFragment : BaseFragment() {
             R.id.logout -> {
                 AuthUI.getInstance().signOut(requireContext()).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        requireActivity().finish()
+                        val activity = requireActivity()
+                        val intent = Intent(activity, AuthenticationActivity::class.java)
+                        startActivity(intent)
+                        activity.finish()
                     } else {
                         Snackbar.make(
                             requireView(),

@@ -109,5 +109,6 @@ class AuthenticationActivity : AppCompatActivity() {
     private fun navigateToRemindersScreen() {
         val intent = Intent(this, RemindersActivity::class.java)
         startActivity(intent)
+        finish()
     }
 }

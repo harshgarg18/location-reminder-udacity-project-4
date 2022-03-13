@@ -99,19 +99,10 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
         return true
     }
 
-    fun markLocation(latLng: LatLng, locality: String?) {
+    fun markLocation(latLng: LatLng, locality: String) {
         latitude.value = latLng.latitude
         longitude.value = latLng.longitude
-        if (locality != null) {
-            reminderSelectedLocationStr.value = locality
-        } else {
-            reminderSelectedLocationStr.value = String.format(
-                Locale.getDefault(),
-                app.getString(R.string.lat_long_snippet),
-                latLng.latitude,
-                latLng.longitude
-            )
-        }
+        reminderSelectedLocationStr.value = locality
     }
 
     @Suppress("UNCHECKED_CAST")

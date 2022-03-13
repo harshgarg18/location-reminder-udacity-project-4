@@ -22,13 +22,6 @@
         android:id="@+id/saveReminderFragment"
         android:name="com.udacity.project4.locationreminders.savereminder.SaveReminderFragment"
         android:label="Add Reminder">
-        <argument
-            android:name="locationInfo"
-            app:argType="com.udacity.project4.locationreminders.savereminder.LocationInfo"
-            app:nullable="true" />
-        <argument
-            android:name="fromMap"
-            app:argType="boolean" />
         <action
             android:id="@+id/action_saveReminderFragment_to_reminderListFragment"
             app:destination="@id/reminderListFragment" />
