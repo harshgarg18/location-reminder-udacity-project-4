@@ -27,6 +27,12 @@ fun DependencyHandler.kapt(list: List<String>) {
     }
 }
 
+fun DependencyHandler.debugImplementation(list: List<String>) {
+    list.forEach {
+        add("debugImplementation", it)
+    }
+}
+
 fun PluginDependenciesSpec.id(list: List<String>) {
     list.forEach {
         id(it)

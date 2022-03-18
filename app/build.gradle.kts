@@ -72,4 +72,7 @@ dependencies {
 
     testImplementation(Dependencies.testLibraries)
     androidTestImplementation(Dependencies.androidTestLibraries)
+
+    // Once https://issuetracker.google.com/127986458 is fixed this can be testImplementation
+    debugImplementation(Dependencies.debugTestLibraries)
 }

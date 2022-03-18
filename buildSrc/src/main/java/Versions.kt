@@ -36,5 +36,6 @@ object Versions {
     const val espressoVersion = "3.4.0"
     const val gsonVersion = "2.8.6"
     const val firebaseUIAuthVersion = "8.0.0"
+    const val firebaseAuthVersion = "21.0.2"
     const val playServicesAuthVersion = "20.0.0"
 }

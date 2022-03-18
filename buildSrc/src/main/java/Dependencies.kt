@@ -26,6 +26,7 @@ object Dependencies {
 
     // FirebaseUI Auth
     private const val firebaseUIAuth = "com.firebaseui:firebase-ui-auth:${Versions.firebaseUIAuthVersion}"
+    private const val firebaseAuth = "com.google.firebase:firebase-auth:${Versions.firebaseAuthVersion}"
     private const val playServicesAuth = "com.google.android.gms:play-services-auth:${Versions.playServicesAuthVersion}"
 
     // Maps & Geofencing
@@ -35,7 +36,6 @@ object Dependencies {
     // ---------------------------------------------------------------------------------------------------- //
     // Other dependencies
     private const val gson = "com.google.code.gson:gson:${Versions.gsonVersion}"
-//    private const val espresso = "androidx.test.espresso:espresso-idling-resource:${Versions.espressoVersion}"
     private const val coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesVersion}"
 
     // Dependencies for local unit tests
@@ -46,7 +46,6 @@ object Dependencies {
     private const val coroutineTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutinesVersion}"
     private const val robolectric = "org.robolectric:robolectric:${Versions.robolectricVersion}"
     private const val truth = "com.google.truth:truth:${Versions.truthVersion}"
-//    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 
     // AndroidX Test - JVM testing
     private const val junitKtx = "androidx.test.ext:junit-ktx:${Versions.androidXTestExtKotlinRunnerVersion}"
@@ -62,12 +61,12 @@ object Dependencies {
     private const val espressoContrib =  "androidx.test.espresso:espresso-contrib:${Versions.espressoVersion}"
     private const val espressoIntents =  "androidx.test.espresso:espresso-intents:${Versions.espressoVersion}"
     private const val espressoIdling =  "androidx.test.espresso.idling:idling-concurrent:${Versions.espressoVersion}"
-    private const val fragmentTest = "androidx.fragment:fragment-testing:${Versions.fragmentVersion}"
-    // Once https://issuetracker.google.com/127986458 is fixed this can be testImplementation
-//    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
     private const val mockitoCore =  "org.mockito:mockito-core:${Versions.mockitoVersion}"
     private const val dexMakerMockito =  "com.linkedin.dexmaker:dexmaker-mockito:${Versions.dexMakerVersion}"
 
+    private const val fragmentTest = "androidx.fragment:fragment-testing:${Versions.fragmentVersion}"
+    private const val fragmentKtx = "androidx.fragment:fragment-ktx:${Versions.fragmentVersion}"
+    private const val testCore = "androidx.test:core:${Versions.androidXTestCoreVersion}"
 
     val appLibraries = arrayListOf<String>().apply {
         add(appCompat)
@@ -85,6 +84,7 @@ object Dependencies {
         add(roomKtx)
         add(roomRuntime)
         add(firebaseUIAuth)
+        add(firebaseAuth)
         add(playServicesAuth)
         add(playServicesLocation)
         add(playServiceMaps)
@@ -111,6 +111,7 @@ object Dependencies {
         add(junitKtx)
         add(coroutineTest)
         add(rules)
+        add(truth)
         add(archTesting)
         add(roomTest)
         add(robolectricAnnotation)
@@ -118,12 +119,17 @@ object Dependencies {
         add(espressoContrib)
         add(espressoIntents)
         add(espressoIdling)
-        add(fragmentTest)
         add(mockitoCore)
         add(dexMakerMockito)
     }
 
     val kaptLibraries = arrayListOf<String>().apply {
         add(roomCompiler)
+    }
+
+    val debugTestLibraries = arrayListOf<String>().apply {
+        add(fragmentKtx)
+        add(fragmentTest)
+        add(testCore)
     }
 }
