@@ -11,8 +11,13 @@ object AppConfig {
 
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-    const val buildTypeRelease = "release"
     const val cleanTask = "clean"
+
+    const val buildTypeRelease = "release"
+
+    const val testSharedPath = "src/testShared/java"
+    const val testDir = "test"
+    const val androidTestDir = "androidTest"
 
     val excludedFiles = arrayOf(
         "META-INF/DEPENDENCIES",

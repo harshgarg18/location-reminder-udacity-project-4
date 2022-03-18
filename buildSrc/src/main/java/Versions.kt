@@ -26,7 +26,7 @@ object Versions {
     const val junitVersion = "4.13.2"
     const val extJUnitVersion = "1.1.3"
     const val androidXTestCoreVersion = "1.4.0"
-    const val robolectricVersion = "4.3.1"
+    const val robolectricVersion = "4.7.3"
     const val androidXTestExtKotlinRunnerVersion = "1.1.3"
     const val archTestingVersion = "2.1.0"
     const val playServicesLocationVersion = "19.0.0"

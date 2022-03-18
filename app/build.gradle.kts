@@ -50,6 +50,18 @@ android {
     packagingOptions {
         resources.excludes.addAll(AppConfig.excludedFiles)
     }
+
+    sourceSets {
+        val testSharedDir = "$projectDir/${AppConfig.testSharedPath}"
+
+        sourceSets.getByName(AppConfig.testDir) {
+            java.srcDirs(testSharedDir)
+        }
+
+        sourceSets.getByName(AppConfig.androidTestDir) {
+            java.srcDir(testSharedDir)
+        }
+    }
 }
 
 dependencies {
