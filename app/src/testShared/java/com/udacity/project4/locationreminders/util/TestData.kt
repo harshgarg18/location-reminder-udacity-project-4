@@ -1,16 +1,7 @@
 package com.udacity.project4.locationreminders.util
 
-import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
-
-val testDTO = ReminderDTO(
-    "Test",
-    "Testing",
-    "Sydney",
-    -33.852,
-    151.211,
-    100.0
-)
+import com.udacity.project4.locationreminders.reminderslist.toDTO
 
 val testDataItem = ReminderDataItem(
     "Test",
@@ -47,3 +38,5 @@ val nullRadiusDataItem = ReminderDataItem(
     151.211,
     null
 )
+
+val testDTO = testDataItem.toDTO()

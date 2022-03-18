@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import java.io.Serializable
 import java.util.*
 
@@ -15,3 +16,12 @@ data class ReminderDataItem(
     var radius: Double?,
     val id: String = UUID.randomUUID().toString()
 ) : Serializable
+
+fun ReminderDataItem.toDTO() = ReminderDTO(
+    title = title,
+    description = description,
+    location = location,
+    latitude = latitude,
+    longitude = longitude,
+    radius = radius
+)
