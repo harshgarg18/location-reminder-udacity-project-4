@@ -1,16 +1,22 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.IntentSender
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
@@ -33,6 +39,7 @@ class SaveReminderFragment : BaseFragment() {
 
     private var isExitingBack = true
     private lateinit var binding: FragmentSaveReminderBinding
+    private lateinit var locationIntentLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +51,15 @@ class SaveReminderFragment : BaseFragment() {
         setDisplayHomeAsUpEnabled(true)
 
         binding.viewModel = viewModel
+
+        locationIntentLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+                if (it.resultCode == Activity.RESULT_OK) {
+                    validateDataAndAddGeofence()
+                } else {
+                    viewModel.showSnackBarInt.postValue(R.string.location_required_error)
+                }
+            }
 
         return binding.root
     }
@@ -71,19 +87,23 @@ class SaveReminderFragment : BaseFragment() {
 
         binding.saveReminder.setOnClickListener {
             checkPermissionsAndStartGeofencing {
-                val title = viewModel.reminderTitle.value
-                val description = viewModel.reminderDescription.value
-                val location = viewModel.reminderSelectedLocationStr.value
-                val latitude = viewModel.latitude.value
-                val longitude = viewModel.longitude.value
-                val radius = viewModel.reminderRadius.value?.toDouble()
-
-                val reminderDataItem =
-                    ReminderDataItem(title, description, location, latitude, longitude, radius)
-                if (viewModel.validateAndSaveReminder(reminderDataItem)) {
-                    addGeofence(reminderDataItem)
-                }
+                validateDataAndAddGeofence()
             }
+        }
+    }
+
+    private fun validateDataAndAddGeofence() {
+        val title = viewModel.reminderTitle.value
+        val description = viewModel.reminderDescription.value
+        val location = viewModel.reminderSelectedLocationStr.value
+        val latitude = viewModel.latitude.value
+        val longitude = viewModel.longitude.value
+        val radius = viewModel.reminderRadius.value?.toDouble()
+
+        val reminderDataItem =
+            ReminderDataItem(title, description, location, latitude, longitude, radius)
+        if (viewModel.validateAndSaveReminder(reminderDataItem)) {
+            addGeofence(reminderDataItem)
         }
     }
 
@@ -112,19 +132,28 @@ class SaveReminderFragment : BaseFragment() {
             priority = LocationRequest.PRIORITY_LOW_POWER
         }
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-        val settingsClient = LocationServices.getSettingsClient(this.requireActivity())
+        val settingsClient = LocationServices.getSettingsClient(requireActivity())
         val locationSettingsResponseTask =
             settingsClient.checkLocationSettings(builder.build())
 
         locationSettingsResponseTask.addOnFailureListener {
-            viewModel.showSnackBarWithAction.postValue(
-                SnackBarAction(
-                    getString(R.string.location_required_error),
-                    getString(android.R.string.ok)
-                ) {
-                    checkDeviceLocationSettingsAndStartGeofence(performAction)
+            if (it is ResolvableApiException) {
+                try {
+                    val intentSenderRequest = IntentSenderRequest.Builder(it.resolution).build()
+                    locationIntentLauncher.launch(intentSenderRequest)
+                } catch (e: IntentSender.SendIntentException) {
+                    Log.e(TAG, "Error getting location settings resolution: ${e.message}")
                 }
-            )
+            } else {
+                viewModel.showSnackBarWithAction.postValue(
+                    SnackBarAction(
+                        getString(R.string.location_required_error),
+                        getString(android.R.string.ok)
+                    ) {
+                        checkDeviceLocationSettingsAndStartGeofence(performAction)
+                    }
+                )
+            }
         }
 
         locationSettingsResponseTask.addOnCompleteListener {
