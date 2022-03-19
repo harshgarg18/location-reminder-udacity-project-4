@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.selectreminderlocation
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.location.Geocoder
@@ -11,8 +12,12 @@ import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.widget.RelativeLayout
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -51,6 +56,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var locationPermissionGranted = false
+    private lateinit var locationIntentLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     private var selectedMarker: Marker? = null
 
@@ -77,6 +83,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
+        locationIntentLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+                checkDeviceLocationSettings(false)
+            }
 
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -113,13 +123,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             if (it.granted) {
                 locationPermissionGranted = true
                 checkDeviceLocationSettings()
+                updateMapOnLocationEnabled()
             } else if (it.showRationale) {
                 showPermissionDeniedInfo()
             }
         }
     }
 
-    private fun checkDeviceLocationSettings() {
+    private fun checkDeviceLocationSettings(resolve: Boolean = true) {
         val locationRequest = LocationRequest.create().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
@@ -129,14 +140,23 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             settingsClient.checkLocationSettings(builder.build())
 
         locationSettingsResponseTask.addOnFailureListener {
-            viewModel.showSnackBarWithAction.postValue(
-                SnackBarAction(
-                    getString(R.string.location_required_error),
-                    getString(android.R.string.ok)
-                ) {
-                    checkDeviceLocationSettings()
+            if (it is ResolvableApiException && resolve) {
+                try {
+                    val intentSenderRequest = IntentSenderRequest.Builder(it.resolution).build()
+                    locationIntentLauncher.launch(intentSenderRequest)
+                } catch (e: IntentSender.SendIntentException) {
+                    Log.e(TAG, "Error getting location settings resolution: ${e.message}")
                 }
-            )
+            } else {
+                viewModel.showSnackBarWithAction.postValue(
+                    SnackBarAction(
+                        getString(R.string.location_required_error),
+                        getString(android.R.string.ok)
+                    ) {
+                        checkDeviceLocationSettings()
+                    }
+                )
+            }
         }
 
         locationSettingsResponseTask.addOnCompleteListener {
@@ -262,6 +282,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             if (!success) {
                 Log.e(TAG, "Styling parse failed")
             }
+            map.uiSettings.isMyLocationButtonEnabled = true
             configureZoomControls()
         } catch (e: Resources.NotFoundException) {
             Log.e(TAG, "Can't find style, Error: $e")
