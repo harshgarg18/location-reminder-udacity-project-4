@@ -1,12 +1,15 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.app.Application
 import android.os.Bundle
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -15,19 +18,26 @@ import androidx.test.filters.MediumTest
 import com.google.android.gms.maps.model.LatLng
 import com.google.common.truth.Truth.assertThat
 import com.udacity.project4.R
-import com.udacity.project4.ServiceLocator
-import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.ReminderDataSource
+import com.udacity.project4.locationreminders.data.local.LocalDB
+import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.util.getOrAwaitValue
 import com.udacity.project4.locationreminders.util.getString
 import com.udacity.project4.locationreminders.util.testDTO
+import com.udacity.project4.util.DataBindingIdlingResource
+import com.udacity.project4.util.EspressoIdlingResource
+import com.udacity.project4.util.monitorFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 import org.mockito.Mockito.mock
 
 @RunWith(AndroidJUnit4::class)
@@ -39,17 +49,43 @@ class SaveReminderFragmentTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var dataSource: ReminderDataSource
+    private val dataBindingIdlingResource = DataBindingIdlingResource()
+    private lateinit var appContext: Application
 
     @Before
-    fun init() {
-        dataSource = FakeDataSource()
-        ServiceLocator.dataSource = dataSource
+    fun registerIdlingResource() {
+        IdlingRegistry.getInstance()
+            .register(EspressoIdlingResource.countingIdlingResource, dataBindingIdlingResource)
     }
 
     @After
-    fun reset() = runBlockingTest {
-        ServiceLocator.resetDataSource()
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance()
+            .unregister(EspressoIdlingResource.countingIdlingResource, dataBindingIdlingResource)
+    }
+
+    @Before
+    fun init() {
+        stopKoin() // stop the original app koin
+        appContext = ApplicationProvider.getApplicationContext()
+
+        val myModule = module {
+            viewModel {
+                SaveReminderViewModel(
+                    appContext,
+                    get() as ReminderDataSource
+                )
+            }
+
+            single<ReminderDataSource> { RemindersLocalRepository(get()) }
+            single { LocalDB.createRemindersDao(appContext) }
+        }
+
+        // declare a new koin module
+        startKoin {
+            androidContext(appContext)
+            modules(listOf(myModule))
+        }
     }
 
     @Test
@@ -61,6 +97,7 @@ class SaveReminderFragmentTest {
         val navController = mock(NavController::class.java)
 
         scenario.onFragment {
+            dataBindingIdlingResource.monitorFragment(it)
             saveReminderViewModel = it.viewModel
             Navigation.setViewNavController(it.view!!, navController)
         }
@@ -78,7 +115,7 @@ class SaveReminderFragmentTest {
     }
 
     @Test
-    fun saveReminder_validData() = runBlockingTest {
+    fun saveReminder_validData() {
         lateinit var saveReminderViewModel: SaveReminderViewModel
         // GIVEN - Save Reminder Fragment launched
         val scenario =
@@ -86,6 +123,7 @@ class SaveReminderFragmentTest {
         val navController = mock(NavController::class.java)
 
         scenario.onFragment {
+            dataBindingIdlingResource.monitorFragment(it)
             saveReminderViewModel = it.viewModel
             Navigation.setViewNavController(it.view!!, navController)
         }

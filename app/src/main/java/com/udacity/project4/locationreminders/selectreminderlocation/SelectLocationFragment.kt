@@ -13,14 +13,12 @@ import android.view.*
 import android.widget.RelativeLayout
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.udacity.project4.MyApp
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -29,6 +27,7 @@ import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.LocationData
 import com.udacity.project4.locationreminders.savereminder.LocationInfo
 import com.udacity.project4.util.setDisplayHomeAsUpEnabled
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 
@@ -41,10 +40,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         private val defaultLocation = LatLng(-33.852, 151.211) // Sydney
     }
 
-    override val viewModel: SelectLocationViewModel by viewModels(ownerProducer = { this.requireActivity() }) {
-        val app = requireContext().applicationContext as MyApp
-        SelectLocationViewModel.Factory(app)
-    }
+    override val viewModel: SelectLocationViewModel by viewModel()
 
     private lateinit var binding: FragmentSelectLocationBinding
 

@@ -11,9 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
 import com.google.android.gms.location.*
-import com.udacity.project4.MyApp
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -23,6 +21,7 @@ import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.util.Constants
 import com.udacity.project4.util.setDisplayHomeAsUpEnabled
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SaveReminderFragment : BaseFragment() {
 
@@ -30,12 +29,7 @@ class SaveReminderFragment : BaseFragment() {
         private const val TAG = "SaveReminderFragment"
     }
 
-    override val viewModel: SaveReminderViewModel by viewModels(ownerProducer = {
-        requireActivity()
-    }) {
-        val app = requireContext().applicationContext as MyApp
-        SaveReminderViewModel.Factory(app, app.dataSource)
-    }
+    override val viewModel: SaveReminderViewModel by viewModel()
 
     private var isExitingBack = true
     private lateinit var binding: FragmentSaveReminderBinding

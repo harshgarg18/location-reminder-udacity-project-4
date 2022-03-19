@@ -75,4 +75,8 @@ dependencies {
 
     // Once https://issuetracker.google.com/127986458 is fixed this can be testImplementation
     debugImplementation(Dependencies.debugTestLibraries)
+
+    androidTestImplementation(Dependencies.koinTest) {
+        exclude(group = "org.mockito")
+    }
 }

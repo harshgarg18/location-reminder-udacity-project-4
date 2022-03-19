@@ -38,4 +38,5 @@ object Versions {
     const val firebaseUIAuthVersion = "8.0.0"
     const val firebaseAuthVersion = "21.0.2"
     const val playServicesAuthVersion = "20.0.0"
+    const val koinVersion = "2.0.1"
 }

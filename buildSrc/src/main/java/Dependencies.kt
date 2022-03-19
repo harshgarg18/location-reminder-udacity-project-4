@@ -33,11 +33,15 @@ object Dependencies {
     private const val playServicesLocation = "com.google.android.gms:play-services-location:${Versions.playServicesLocationVersion}"
     private const val playServiceMaps = "com.google.android.gms:play-services-maps:${Versions.playServiceMapsVersion}"
 
-    // ---------------------------------------------------------------------------------------------------- //
+    // Koin
+    private const val koinAndroid = "io.insert-koin:koin-android:${Versions.koinVersion}"
+    private const val koinViewModel = "io.insert-koin:koin-androidx-viewmodel:${Versions.koinVersion}"
+
     // Other dependencies
     private const val gson = "com.google.code.gson:gson:${Versions.gsonVersion}"
     private const val coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesVersion}"
 
+    // ---------------------------------------------------------------------------------------------------- //
     // Dependencies for local unit tests
     private const val junit = "junit:junit:${Versions.junitVersion}"
     private const val hamcrest = "org.hamcrest:hamcrest-all:${Versions.hamcrestVersion}"
@@ -63,6 +67,7 @@ object Dependencies {
     private const val espressoIdling =  "androidx.test.espresso.idling:idling-concurrent:${Versions.espressoVersion}"
     private const val mockitoCore =  "org.mockito:mockito-core:${Versions.mockitoVersion}"
     private const val dexMakerMockito =  "com.linkedin.dexmaker:dexmaker-mockito:${Versions.dexMakerVersion}"
+    const val koinTest = "io.insert-koin:koin-test:${Versions.koinVersion}"
 
     private const val fragmentTest = "androidx.fragment:fragment-testing:${Versions.fragmentVersion}"
     private const val fragmentKtx = "androidx.fragment:fragment-ktx:${Versions.fragmentVersion}"
@@ -88,6 +93,8 @@ object Dependencies {
         add(playServicesAuth)
         add(playServicesLocation)
         add(playServiceMaps)
+        add(koinAndroid)
+        add(koinViewModel)
         add(gson)
         add(coroutine)
         add(espressoIdling)
