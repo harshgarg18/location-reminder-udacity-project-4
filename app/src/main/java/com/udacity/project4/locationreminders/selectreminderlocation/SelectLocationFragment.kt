@@ -28,7 +28,7 @@ import com.udacity.project4.base.SnackBarAction
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.LocationData
 import com.udacity.project4.locationreminders.savereminder.LocationInfo
-import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
+import com.udacity.project4.util.setDisplayHomeAsUpEnabled
 import java.util.*
 
 

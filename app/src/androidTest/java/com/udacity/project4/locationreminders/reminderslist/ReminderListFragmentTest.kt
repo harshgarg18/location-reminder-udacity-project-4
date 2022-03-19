@@ -49,7 +49,7 @@ class ReminderListFragmentTest {
     }
 
     @Test
-    fun clickAddReminder_navigateToSaveReminderFragment() = runBlockingTest {
+    fun clickAddReminder_navigateToSaveReminderFragment() {
         // GIVEN - Reminder List Fragment launched
         val scenario =
             launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
@@ -75,7 +75,6 @@ class ReminderListFragmentTest {
         launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
 
         // THEN - Reminder details are display on screen
-        onView(withId(R.id.remindersRecyclerView)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
         onView(withText(testDTO.title)).check(matches(isDisplayed()))
         onView(withText(testDTO.description)).check(matches(isDisplayed()))
         onView(withText(testDTO.location)).check(matches(isDisplayed()))
@@ -85,7 +84,7 @@ class ReminderListFragmentTest {
     }
 
     @Test
-    fun noReminder_DisplayedInUI() = runBlockingTest {
+    fun noReminder_DisplayedInUI() {
         // GIVEN - No reminder in the DB
 
         // WHEN  - Reminder List Fragment launched to display reminders

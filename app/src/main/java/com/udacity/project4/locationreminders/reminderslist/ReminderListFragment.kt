@@ -14,9 +14,9 @@ import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
 import com.udacity.project4.locationreminders.savereminder.LocationData
-import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
-import com.udacity.project4.utils.setTitle
-import com.udacity.project4.utils.setup
+import com.udacity.project4.util.setDisplayHomeAsUpEnabled
+import com.udacity.project4.util.setTitle
+import com.udacity.project4.util.setup
 
 class ReminderListFragment : BaseFragment() {
     override val viewModel: RemindersListViewModel by viewModels {

@@ -1,4 +1,4 @@
-package com.udacity.project4.utils
+package com.udacity.project4.util
 
 object Constants {
     const val GEOFENCE_RADIUS_IN_METERS = 100

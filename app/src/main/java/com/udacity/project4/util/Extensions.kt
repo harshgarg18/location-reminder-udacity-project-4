@@ -1,4 +1,4 @@
-package com.udacity.project4.utils
+package com.udacity.project4.util
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter

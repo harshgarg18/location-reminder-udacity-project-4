@@ -3,7 +3,7 @@ package com.udacity.project4.locationreminders.geofence
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.udacity.project4.utils.Constants
+import com.udacity.project4.util.Constants
 
 /**
  * Triggered by the Geofence.  Since we can have many Geofences at once, we pull the request

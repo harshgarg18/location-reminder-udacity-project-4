@@ -90,6 +90,7 @@ object Dependencies {
         add(playServiceMaps)
         add(gson)
         add(coroutine)
+        add(espressoIdling)
     }
 
     val testLibraries = arrayListOf<String>().apply {
@@ -118,7 +119,6 @@ object Dependencies {
         add(espressoCore)
         add(espressoContrib)
         add(espressoIntents)
-        add(espressoIdling)
         add(mockitoCore)
         add(dexMakerMockito)
     }
