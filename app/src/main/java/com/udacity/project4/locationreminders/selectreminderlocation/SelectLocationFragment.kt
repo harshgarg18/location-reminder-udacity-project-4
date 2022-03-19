@@ -104,6 +104,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             requestLocationPermissions()
         }
         checkDeviceLocationSettings()
+        updateMapOnLocationEnabled()
     }
 
     private fun moveMapCamera(latLng: LatLng) {
@@ -152,8 +153,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun registerLocationUpdates() {
         updateMapOnLocationEnabled()
         val locationRequest = LocationRequest.create().apply {
-//            interval = 120000 // two minute interval
-//            fastestInterval = 120000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
@@ -176,7 +175,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             return
         }
         Looper.myLooper()?.let {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, it)
+            fusedLocationProviderClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                it
+            )
             moveToDeviceLocation()
         }
     }
@@ -284,7 +287,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private fun updateMapOnLocationEnabled() {
         map.isMyLocationEnabled = locationPermissionGranted
-        map.uiSettings.isMyLocationButtonEnabled = locationPermissionGranted
+        map.uiSettings.isMyLocationButtonEnabled = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
