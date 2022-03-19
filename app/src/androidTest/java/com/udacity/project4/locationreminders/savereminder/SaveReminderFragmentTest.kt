@@ -12,20 +12,19 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.android.gms.maps.model.LatLng
-import com.google.common.truth.Truth.assertThat
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
-import com.udacity.project4.locationreminders.util.getOrAwaitValue
-import com.udacity.project4.locationreminders.util.getString
 import com.udacity.project4.locationreminders.util.testDTO
 import com.udacity.project4.util.DataBindingIdlingResource
 import com.udacity.project4.util.EspressoIdlingResource
+import com.udacity.project4.util.ToastMatcher
 import com.udacity.project4.util.monitorFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
@@ -90,7 +89,6 @@ class SaveReminderFragmentTest {
 
     @Test
     fun saveReminder_nullLocation() {
-        lateinit var saveReminderViewModel: SaveReminderViewModel
         // GIVEN - Save Reminder Fragment launched
         val scenario =
             launchFragmentInContainer<SaveReminderFragment>(Bundle(), R.style.AppTheme)
@@ -98,7 +96,6 @@ class SaveReminderFragmentTest {
 
         scenario.onFragment {
             dataBindingIdlingResource.monitorFragment(it)
-            saveReminderViewModel = it.viewModel
             Navigation.setViewNavController(it.view!!, navController)
         }
 
@@ -110,8 +107,8 @@ class SaveReminderFragmentTest {
         onView(withId(R.id.saveReminder)).perform(click())
 
         // THEN - verify that SnackBar is shown with error as missing location
-        assertThat(saveReminderViewModel.showSnackBarInt.getOrAwaitValue())
-            .isEqualTo(R.string.err_select_location)
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText(R.string.err_select_location)))
     }
 
     @Test
@@ -139,7 +136,7 @@ class SaveReminderFragmentTest {
         onView(withId(R.id.saveReminder)).perform(click())
 
         // THEN - verify that toast is shown with message that reminder is saved
-        assertThat(saveReminderViewModel.showToast.getOrAwaitValue())
-            .isEqualTo(getString(R.string.reminder_saved))
+        onView(withText(R.string.reminder_saved)).inRoot(ToastMatcher())
+            .check(matches(isDisplayed()))
     }
 }

@@ -20,7 +20,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.testing.FragmentScenario
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.IdlingResource
 import java.util.*
@@ -102,6 +101,7 @@ fun DataBindingIdlingResource.monitorActivity(
         this.activity = it
     }
 }
+
 /**
  * Sets the activity from a [Fragment] to be used from [DataBindingIdlingResource].
  */
